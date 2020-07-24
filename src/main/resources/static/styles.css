@@ -1,5 +1,6 @@
 html {
-/* 	background: white; */
+	/* 	background: white; */
+	
 }
 
 h3 {
@@ -22,6 +23,9 @@ body {
 	font-size: 110%;
 	text-align: left;
 	margin: 15px 0px;
+/* 	background-image: */
+/* 		url("https://previews.123rf.com/images/arphoenixphoto/arphoenixphoto1809/arphoenixphoto180900299/108893023-pink-background-or-texture-glitter-sparkle-blurred-light-abstract-paillette-luxury-shiny-wallpaper-m.jpg"); */
+/* 	background-position: center */
 }
 
 .header-container {
@@ -31,6 +35,9 @@ body {
 	position: relative;
 	background: #00bbbb;
 	color: white;
+	background-image:
+		url("https://centrafork.co.nz/wp-content/uploads/Page-Title-Background.jpg");
+	background-position: center;
 }
 
 .header-container .header-bar {
@@ -46,15 +53,21 @@ body {
 
 .footer-container {
 	text-align: center;
-	 width: 100%;
-	 position:fixed;
-	 
-    bottom:0;
+	width: 100%;
+	position: fixed;
+	bottom: 0;
 	margin-top: 3px;
 	padding: 5px 30px 5px 0px;
 	border-top: 1px solid #ccc;
 	background: #648182;
 	color: #f0f0f0;
+	bottom: 0;
+	background-image:
+	linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+		url("https://i.pinimg.com/originals/90/e0/f2/90e0f2b26b2369f72bff163a101f4142.jpg");
+	background-position: center;
+	
+	
 }
 
 .menu-container {
