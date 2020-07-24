@@ -11,7 +11,8 @@
       <th:block th:include="/_menu"></th:block>
        
       <div class="page-title"><b>Product List</b></div>
-       
+       <div class= "product-body">
+       <h4>Don't miss you this exciting products!!</h4>
       <div class="product-preview-container" th:each="prodInfo : ${paginationProducts.list}">
          <ul>
             <li><img class="product-image"
@@ -31,8 +32,11 @@
             </th:block>
          </ul>
       </div>
-       
+       </div>
       <br/>
+      <div>
+      <h3>Only few stocks left..!</h3>
+      </div>
       <div class="page-navigator" th:if="${paginationProducts.totalPages > 1}">
          <th:block th:each="page : ${paginationProducts.navigationPages}">
          

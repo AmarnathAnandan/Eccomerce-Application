@@ -1,11 +1,10 @@
 html {
-	background: white;
+/* 	background: white; */
 }
 
 h3 {
-	margin: 0px;
-	padding: 0px;
-
+	margin: 5px;
+	padding: 14px;
 	font-size: 40px;
 }
 
@@ -47,8 +46,12 @@ body {
 
 .footer-container {
 	text-align: center;
-	margin-top: 10px;
-	padding: 5px 0px 5px 0px;
+	 width: 100%;
+	 position:fixed;
+	 
+    bottom:0;
+	margin-top: 3px;
+	padding: 5px 30px 5px 0px;
 	border-top: 1px solid #ccc;
 	background: #648182;
 	color: #f0f0f0;
@@ -68,34 +71,69 @@ body {
 
 .site-name {
 	font-size: 200%;
-	margin: 10px 10px 10px 0px;
+	margin: 5px 5px 10px 0px;
 	padding: 5px;
 }
 
 .container {
 	margin: 5px 0px;
-	height: 300px;
+	height: 350px;
 }
 
-.demo-container, .login-container, .account-container {
-	 background-image: 
-    linear-gradient(
-      rgba(0, 0, 0, 0.5),
-      rgba(0, 0, 0, 0)
-    ),
-	
+.demo-container {
+	background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0)),
 		url("https://c1.wallpaperflare.com/preview/207/177/185/fabric-material-cloth-design.jpg");
 	background-repeat: no-repeat;
 	background-size: cover;
 	padding: 5px;
 	border: 1px solid #ccc;
-	text-align: left;
 	color: white;
 	font-size: 30px;
-	margin: 20px 0px;
-	height: 310px;
-	margin: 20px 0px;
+	height: 340px;
 	text-transform: capitalize;
+}
+
+.login-container {
+	background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0)),
+		url("https://c1.wallpaperflare.com/preview/207/177/185/fabric-material-cloth-design.jpg");
+	background-repeat: no-repeat;
+	background-size: cover;
+	padding: 30px;
+	border: 1px solid #ccc;
+	color: white;
+	font-size: 30px;
+	height: 364px;
+	text-transform: capitalize;
+}
+
+.account-container {
+	background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0)),
+		url("https://c1.wallpaperflare.com/preview/207/177/185/fabric-material-cloth-design.jpg");
+	background-repeat: no-repeat;
+	background-size: cover;
+	padding: 30px;
+	border: 1px solid #ccc;
+	color: white;
+	font-size: 30px;
+	height: 332px;
+	text-transform: capitalize;
+}
+
+.final-container {
+	background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0)),
+		url("https://c1.wallpaperflare.com/preview/207/177/185/fabric-material-cloth-design.jpg");
+	background-repeat: no-repeat;
+	background-size: cover;
+	padding: 30px;
+	border: 1px solid #ccc;
+	color: white;
+	font-size: 30px;
+	height: 332px;
+	text-transform: capitalize;
+}
+
+.order-list-container {
+	
 }
 
 .customer-info-container {
@@ -104,13 +142,20 @@ body {
 	padding: 0px 5px;
 }
 
+product-body {
+	height: 800px;
+	bottom: 500px;
+	border: 1px solid #ccc;
+	color: purple;
+}
+
 .product-preview-container {
 	border: 1px solid #ccc;
-	padding: 5px;
-	width: 250px;
+	padding: 30px;
+	width: 200px;
 	margin: 10px;
 	display: inline-block;
-	text-align: left;
+	text-shadow: blue;
 }
 
 .product-preview-container input {
@@ -126,9 +171,9 @@ ul {
 	list-style-type: none;
 	padding-left: 5px;
 	margin: 5px;
-	color: green;
-  background-color: transparent;
-  text-decoration: none;
+	/* 	color: mediumvioletred; */
+	background-color: transparent;
+	text-decoration: none;
 }
 
 .navi-item {
@@ -149,6 +194,7 @@ ul {
 	font-size: 90%;
 	color: red;
 	font-style: italic;
+	text-align: left;
 }
 
 .price {
