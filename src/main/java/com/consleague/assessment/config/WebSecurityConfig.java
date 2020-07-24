@@ -21,12 +21,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 		http.csrf().disable();
 
-		// Requires login with role ROLE_EMPLOYEE or ROLE_MANAGER.
+		// Requires login with role ROLE_EMPLOYEE or ROLE_MANAGER of Consleague company
+		// to access.
 		// If not, it will redirect to /admin/login.
 		http.authorizeRequests().antMatchers("/admin/orderList", "/admin/order", "/admin/accountInfo")//
 				.access("hasAnyRole('ROLE_EMPLOYEE', 'ROLE_MANAGER')");
 
-		// Pages only for MANAGER
+		// Pages only for Consleague ADMIN
 		http.authorizeRequests().antMatchers("/admin/product").access("hasRole('ROLE_MANAGER')");
 
 		// When user login, role XX.

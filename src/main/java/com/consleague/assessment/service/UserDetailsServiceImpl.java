@@ -23,18 +23,20 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 	@Autowired
 	private AccountDAO accountDAO;
 
+//It returns the consleague user details. Making sure others cannot access it for security purpose.
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		Account account = accountDAO.findAccount(username);
 //		Account account = null;
-//
+
 		System.out.println("Account= " + account);
 
 		if (account == null)
 			throw new UsernameNotFoundException("User " //
 					+ username + " was not found in the database");
 
-		// EMPLOYEE,MANAGER,..
+		// EMPLOYEE,ADMIN,..
+		// Non Consleague members cannot access it.
 		String role = account.getUserRole();
 
 		List<GrantedAuthority> grantList = new ArrayList<GrantedAuthority>();
@@ -49,6 +51,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 		boolean credentialsNonExpired = true;
 		boolean accountNonLocked = true;
 
+		// creating the user
 		UserDetails userDetails = new User(account.getUserName(), //
 				account.getEncrytedPassword(), enabled, accountNonExpired, //
 				credentialsNonExpired, accountNonLocked, grantList);

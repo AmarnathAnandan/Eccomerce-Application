@@ -1,24 +1,27 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-   <head>
-      <meta charset="UTF-8">
-      <title>Books Shop Online</title>
-      <link rel="stylesheet" type="text/css" th:href="@{/styles.css}" />
-   </head>
-   <body>
-      <th:block th:include="/_header"></th:block>
-      <th:block th:include="/_menu"></th:block>
-       
-      <div class="page-title">Shopping Cart Demo</div>
-      <div class="demo-container">
-         <h3>Demo content</h3>
-         <ul>
-            <li>Buy online</li>
-            <li>Admin pages</li>
-            <li>Reports</li>
-         </ul>
-      </div>
-       
-      <th:block th:include="/_footer"></th:block>
-       
-   </body>
+<head>
+<meta charset="UTF-8">
+<title>CONSLEAGUE FABRICS</title>
+<link rel="stylesheet" type="text/css" th:href="@{/styles.css}" />
+</head>
+<body>
+	<th:block th:include="/_header"></th:block>
+	<th:block th:include="/_menu"></th:block>
+
+	<div class="page-title">
+		Welcome to India's Most Loved Store for Fabrics & More <br> <br>
+		"In difficult times, fashion is always outrageous." —Elsa Schiaparelli
+	</div>
+	<div class="demo-container">
+		<h3>Sale is live!!</h3>
+		<ul>
+			<li><a th:href="@{/productList}" style="color: #ff1476">NEW ARRIVALS</a></li>
+			<li><a th:href="@{/productList}" style="color: #f5e838">30% Discount</a></li>
+			<li><a th:href="@{/productList}" style="color: #38f596">Upto 70% Discount</a></li>
+		</ul>
+	</div>
+
+	<th:block th:include="/_footer"></th:block>
+
+</body>
