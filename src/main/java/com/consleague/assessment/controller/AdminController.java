@@ -19,10 +19,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.consleague.assessment.dao.MaterialDAO;
 import com.consleague.assessment.dao.OrderDAO;
 import com.consleague.assessment.dao.ProductDAO;
 import com.consleague.assessment.entity.Product;
 import com.consleague.assessment.form.ProductForm;
+import com.consleague.assessment.model.MaterialDetailInfo;
 import com.consleague.assessment.model.OrderDetailInfo;
 import com.consleague.assessment.model.OrderInfo;
 import com.consleague.assessment.pagination.PaginationResult;
@@ -31,6 +33,9 @@ import com.consleague.assessment.validator.ProductFormValidator;
 @Controller
 @Transactional
 public class AdminController {
+
+	@Autowired
+	private MaterialDAO materialDAO;
 
 	@Autowired
 	private OrderDAO orderDAO;
@@ -51,6 +56,24 @@ public class AdminController {
 
 		model.addAttribute("userDetails", userDetails);
 		return "accountInfo";
+	}
+
+	@RequestMapping(value = { "/admin/materialList" }, method = RequestMethod.GET)
+	public String getMaterialList(Model model, //
+			@RequestParam(value = "page", defaultValue = "1") String pageStr) {
+		int page = 1;
+		try {
+			page = Integer.parseInt(pageStr);
+		} catch (Exception e) {
+		}
+		final int MAX_RESULT = 5;
+		final int MAX_NAVIGATION_PAGE = 10;
+
+		PaginationResult<MaterialDetailInfo> paginationResult //
+				= materialDAO.listDetailInfo(page, MAX_RESULT, MAX_NAVIGATION_PAGE);
+
+		model.addAttribute("paginationResult", paginationResult);
+		return "materialDetails";
 	}
 
 	// GET: Show Login Page

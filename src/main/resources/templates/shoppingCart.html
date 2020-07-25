@@ -13,6 +13,9 @@
        
       <th:block th:if="${cartForm == null || cartForm.cartLines == null || cartForm.cartLines.empty}">
          <h2>There is no items in Cart</h2>
+        <div class="blink_me">
+        <h4>Don't miss out on something that could be amazing !!</h4> 
+        </div>
          <a th:href="@{/productList}">Show Product List</a>
       </th:block>
        

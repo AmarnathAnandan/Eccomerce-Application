@@ -12,14 +12,14 @@
        
       <div class="page-title"><b>Product List</b></div>
        <div class= "product-body">
-       <h4>Don't miss out this exciting products!!</h4>
+<!--        <p>Don't miss out this exciting products!!</p> -->
       <div class="product-preview-container" th:each="prodInfo : ${paginationProducts.list}">
          <ul>
             <li><img class="product-image"
                th:src="@{|/productImage?code=${prodInfo.code}|}" /></li>
             <li>Code: <span th:utext="${prodInfo.code}"></span></li>
             <li>Name: <span th:utext="${prodInfo.name}"></span></li>
-            <li>Price: <span th:utext="${#numbers.formatDecimal(prodInfo.price,3,2,'COMMA')}"></span></li>
+            <li>Price: Rs.<span th:utext="${#numbers.formatDecimal(prodInfo.price,2,0,'COMMA')}"></span></li>
             <li>
                <a th:href="@{|/buyProduct?code=${prodInfo.code}|}">Buy Now</a>
             </li>
@@ -35,7 +35,7 @@
        </div>
       <br/>
       <div>
-      <h3>Only few stocks left..!</h3>
+      <h3>Don't miss out this exciting products!!.. Only few stocks left..!</h3>
       </div>
       <div class="page-navigator" th:if="${paginationProducts.totalPages > 1}">
          <th:block th:each="page : ${paginationProducts.navigationPages}">
