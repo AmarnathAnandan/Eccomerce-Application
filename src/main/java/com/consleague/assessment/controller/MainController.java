@@ -162,7 +162,7 @@ public class MainController {
 		return "shoppingCartConfirmation";
 	}
 
-	private void deductRawMaterialsCount(CartInfo cartInfo) {
+	private Boolean deductRawMaterialsCount(CartInfo cartInfo, Boolean isSave) {
 		Map<String, Integer> materialMap = new HashMap<String, Integer>();
 		List<CartLineInfo> cartLines = cartInfo.getCartLines();
 
@@ -170,8 +170,7 @@ public class MainController {
 			materialMap.put(s.getProductInfo().getCode(), s.getQuantity());
 		}
 
-		materialDAO.doDeduction(materialMap);
-		System.out.println(materialMap);
+		return materialDAO.doDeduction(materialMap, isSave);
 
 	}
 
@@ -186,7 +185,7 @@ public class MainController {
 		else if (!cartInfo.isValidCustomer())
 			return "redirect:/shoppingCartCustomer";
 		try {
-			deductRawMaterialsCount(cartInfo);
+			deductRawMaterialsCount(cartInfo, true);
 
 			orderDAO.saveOrder(cartInfo);
 		} catch (Exception e) {
@@ -209,15 +208,21 @@ public class MainController {
 
 		CartInfo cartInfo = Utils.getCartInSession(request);
 
-		if (cartInfo.isEmpty())
+		if (deductRawMaterialsCount(cartInfo, false)) {
+			model.addAttribute("toShow", new Object());
 			return "redirect:/shoppingCart";
-		CustomerInfo customerInfo = cartInfo.getCustomerInfo();
+		} else {
 
-		CustomerForm customerForm = new CustomerForm(customerInfo);
+			if (cartInfo.isEmpty())
+				return "redirect:/shoppingCart";
+			CustomerInfo customerInfo = cartInfo.getCustomerInfo();
 
-		model.addAttribute("customerForm", customerForm);
+			CustomerForm customerForm = new CustomerForm(customerInfo);
 
-		return "shoppingCartCustomer";
+			model.addAttribute("customerForm", customerForm);
+
+			return "shoppingCartCustomer";
+		}
 	}
 
 	// POST: Save customer information.
@@ -257,8 +262,10 @@ public class MainController {
 	@RequestMapping(value = { "/shoppingCart" }, method = RequestMethod.GET)
 	public String shoppingCartHandler(HttpServletRequest request, Model model) {
 		CartInfo myCart = Utils.getCartInSession(request);
-
 		model.addAttribute("cartForm", myCart);
+		if (deductRawMaterialsCount(myCart, false)) {
+			model.addAttribute("toShow", new Object());
+		}
 		return "shoppingCart";
 	}
 

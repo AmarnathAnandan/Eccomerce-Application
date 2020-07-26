@@ -1,6 +1,7 @@
 package com.consleague.assessment.dao;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -64,26 +65,46 @@ public class MaterialDAO {
 		return new PaginationResult<MaterialDetailInfo>(query, page, maxResult, maxNavigationPage);
 	}
 
-	public void doDeduction(Map<String, Integer> materialMap) {
+	public Boolean doDeduction(Map<String, Integer> materialMap, Boolean isSave) {
+		Boolean takeBack = false;
+		List<Boolean> isOk = new ArrayList<Boolean>();
 		for (Map.Entry<String, Integer> entry : materialMap.entrySet()) {
 			Product product = this.productDAO.findProduct(entry.getKey());
 
-			deduceMaterialQuantityCalculation(entry, product.getRawMaterial1(), product.getRawMaterial1Quantity());
-			deduceMaterialQuantityCalculation(entry, product.getRawMaterial2(), product.getRawMaterial2Quantity());
-			deduceMaterialQuantityCalculation(entry, product.getRawMaterial3(), product.getRawMaterial3Quantity());
+			isOk.add(deduceMaterialQuantityCalculation(entry, product.getRawMaterial1(),
+					product.getRawMaterial1Quantity(), isSave));
+			isOk.add(deduceMaterialQuantityCalculation(entry, product.getRawMaterial2(),
+					product.getRawMaterial2Quantity(), isSave));
+			isOk.add(deduceMaterialQuantityCalculation(entry, product.getRawMaterial3(),
+					product.getRawMaterial3Quantity(), isSave));
 		}
+
+		for (int i = 0; i < isOk.size(); i++) {
+			if (!isOk.get(i)) {
+				takeBack = true;
+				break;
+			}
+		}
+		return takeBack;
 	}
 
-	private void deduceMaterialQuantityCalculation(Map.Entry<String, Integer> entry, String material, int quanity) {
+	private boolean deduceMaterialQuantityCalculation(Map.Entry<String, Integer> entry, String material, int quanity,
+			Boolean isSave) {
 		int materialDetailsId = getMaterialId(material);
 		MaterialForm mtInfo = getDetailInfo(materialDetailsId);
 
 		int quantity = mtInfo.getMaterialQuantity() - (quanity * entry.getValue());
-		if (quantity >= 0) {
+		if (quantity >= 0 && isSave) {
 			mtInfo.setMaterialQuantity(quantity);
 			save(mtInfo);
-		} else
-			System.out.println("error saving");
+			return true;
+		} else if (quantity <= 0 && isSave) {
+			return false;
+		} else if (quantity <= 0 && !isSave) {
+			return false;
+		} else {
+			return true;
+		}
 
 	}
 
