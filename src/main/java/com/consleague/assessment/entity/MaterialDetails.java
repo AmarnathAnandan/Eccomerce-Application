@@ -1,11 +1,11 @@
 package com.consleague.assessment.entity;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.Lob;
 import javax.persistence.Table;
 
 @Entity
@@ -24,10 +24,6 @@ public class MaterialDetails implements Serializable {
 	@Column(name = "material_id", nullable = false)
 	private int materialId;
 
-	@Lob
-	@Column(name = "material_image", length = Integer.MAX_VALUE, nullable = true)
-	private byte[] materialImage;
-
 	@Column(name = "material_name", nullable = false)
 	private String materialName;
 
@@ -37,8 +33,19 @@ public class MaterialDetails implements Serializable {
 	@Column(name = "material_threshold", nullable = false)
 	private int materialThreshold;
 
+	@Column(name = "last_modified", nullable = false)
+	private Timestamp lastModified;
+
 	public String getMaterialColor() {
 		return materialColor;
+	}
+
+	public Timestamp getLastModified() {
+		return lastModified;
+	}
+
+	public void setLastModified(Timestamp lastModified) {
+		this.lastModified = lastModified;
 	}
 
 	public double getMaterialCost() {
@@ -47,10 +54,6 @@ public class MaterialDetails implements Serializable {
 
 	public int getMaterialId() {
 		return materialId;
-	}
-
-	public byte[] getMaterialImage() {
-		return materialImage;
 	}
 
 	public String getMaterialName() {
@@ -75,10 +78,6 @@ public class MaterialDetails implements Serializable {
 
 	public void setMaterialId(int materialId) {
 		this.materialId = materialId;
-	}
-
-	public void setMaterialImage(byte[] materialImage) {
-		this.materialImage = materialImage;
 	}
 
 	public void setMaterialName(String materialName) {

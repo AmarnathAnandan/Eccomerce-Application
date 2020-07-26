@@ -141,6 +141,9 @@ public class AdminController {
 			productForm = new ProductForm();
 			productForm.setNewProduct(true);
 		}
+
+		List<MaterialDetailInfo> materialNameList = materialDAO.getRawMaterialListInfo();
+		model.addAttribute("materialNameList", materialNameList);
 		model.addAttribute("productForm", productForm);
 		return "product";
 	}
@@ -152,8 +155,12 @@ public class AdminController {
 			BindingResult result, //
 			final RedirectAttributes redirectAttributes) {
 
-		if (result.hasErrors())
+		if (result.hasErrors()) {
+			List<MaterialDetailInfo> materialNameList = materialDAO.getRawMaterialListInfo();
+			model.addAttribute("materialNameList", materialNameList);
+			model.addAttribute("productForm", productForm);
 			return "product";
+		}
 		try {
 			productDAO.save(productForm);
 		} catch (Exception e) {

@@ -44,6 +44,10 @@
          <div class="product-preview-container" th:each="cartLineInfo : ${myCart.cartLines}">
             <ul>
                <li>
+               
+<!--                <img class="product-image" -->
+<!--                th:src="@{|/productImage?code=${prodInfo.code}|}" /> -->
+               
                   <img class="product-image"
                      src="@{|/productImage?code=${cartLineInfo.productInfo.code}|}" />
                </li>

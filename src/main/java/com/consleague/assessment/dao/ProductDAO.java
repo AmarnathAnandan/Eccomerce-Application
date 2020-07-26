@@ -13,8 +13,10 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.consleague.assessment.entity.MaterialDetails;
 import com.consleague.assessment.entity.Product;
 import com.consleague.assessment.form.ProductForm;
+import com.consleague.assessment.model.MaterialDetailInfo;
 import com.consleague.assessment.model.ProductInfo;
 import com.consleague.assessment.pagination.PaginationResult;
 
@@ -32,7 +34,7 @@ public class ProductDAO {
 			Session session = this.sessionFactory.getCurrentSession();
 			Query<Product> query = session.createQuery(sql, Product.class);
 			query.setParameter("code", code);
-			return (Product) query.getSingleResult();
+			return query.getSingleResult();
 		} catch (NoResultException e) {
 			return null;
 		}
@@ -84,7 +86,15 @@ public class ProductDAO {
 		}
 		product.setCode(code);
 		product.setName(productForm.getName());
-		product.setPrice(productForm.getPrice());
+
+		product.setRawMaterial1(productForm.getRawMaterial1());
+		product.setRawMaterial1Quantity(productForm.getRawMaterial1Quantity());
+		product.setRawMaterial2(productForm.getRawMaterial2());
+		product.setRawMaterial2Quantity(productForm.getRawMaterial2Quantity());
+		product.setRawMaterial3(productForm.getRawMaterial3());
+		product.setRawMaterial3Quantity(productForm.getRawMaterial3Quantity());
+
+		product.setPrice(calculateProductPrice(productForm));
 
 		if (productForm.getFileData() != null) {
 			byte[] image = null;
@@ -101,4 +111,26 @@ public class ProductDAO {
 		session.flush();
 	}
 
+	public double calculateProductPrice(ProductForm productForm) {
+		return getMaterialCost(productForm.getRawMaterial1(), productForm.getRawMaterial1Quantity())
+				+ getMaterialCost(productForm.getRawMaterial2(), productForm.getRawMaterial2Quantity())
+				+ getMaterialCost(productForm.getRawMaterial3(), productForm.getRawMaterial3Quantity());
+	}
+
+	private double getMaterialCost(String rawMaterial, int rawMaterialQuantity) {
+		double cost = 0;
+		try {
+			String sql = "Select new " + MaterialDetailInfo.class.getName()//
+					+ "(md.materialCost) " + " from " + MaterialDetails.class.getName() + " md ";//
+			sql += " Where md.materialName =:rawMaterial  ";
+			Session session = this.sessionFactory.getCurrentSession();
+			Query<MaterialDetailInfo> query = session.createQuery(sql, MaterialDetailInfo.class);
+			query.setParameter("rawMaterial", rawMaterial);
+			cost = query.getSingleResult().getMaterialCost();
+
+		} catch (NoResultException e) {
+			System.out.println("error");
+		}
+		return cost * rawMaterialQuantity;
+	}
 }

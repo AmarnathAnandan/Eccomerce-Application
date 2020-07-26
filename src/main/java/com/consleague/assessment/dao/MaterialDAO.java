@@ -1,13 +1,21 @@
 package com.consleague.assessment.dao;
 
+import java.sql.Timestamp;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.consleague.assessment.entity.MaterialDetails;
+import com.consleague.assessment.entity.Product;
+import com.consleague.assessment.form.MaterialForm;
 import com.consleague.assessment.model.MaterialDetailInfo;
 import com.consleague.assessment.pagination.PaginationResult;
 
@@ -18,47 +26,37 @@ public class MaterialDAO {
 	@Autowired
 	private SessionFactory sessionFactory;
 
-	public MaterialDetails findOrder(String detailsId) {
+	@Autowired
+	private ProductDAO productDAO;
+
+	public MaterialDetails findOrder(int detailsId) {
 		Session session = this.sessionFactory.getCurrentSession();
 		return session.find(MaterialDetails.class, detailsId);
 	}
 
-//	private int getMaxOrderNum() {
-//		String sql = "Select max(o.orderNum) from " + Order.class.getName() + " o ";
-//		Session session = this.sessionFactory.getCurrentSession();
-//		Query<Integer> query = session.createQuery(sql, Integer.class);
-//		Integer value = query.getSingleResult();
-//		if (value == null)
-//			return 0;
-//		return value;
-//	}
-
-	public MaterialDetailInfo getDetailInfo(String detailsId) {
+	public MaterialForm getDetailInfo(int detailsId) {
 		MaterialDetails details = this.findOrder(detailsId);
 		if (details == null)
 			return null;
-		return new MaterialDetailInfo(details.getMaterialId(), details.getMaterialName(), details.getMaterialCost(),
-				details.getMaterialColor(), details.getMaterialThreshold(), details.getMaterialQuantity());
+		return new MaterialForm(details.getMaterialColor(), details.getMaterialCost(), details.getMaterialId(),
+				details.getMaterialName(), details.getMaterialQuantity(), details.getMaterialThreshold(),
+				details.getLastModified());
 
 	}
 
-//	public List<MaterialDetailInfo> listMAterialDetailInfos(String detailsId) {
-//		String sql = "Select new " + MaterialDetailInfo.class.getName() //
-//				+ "(d.id, d.product.code, d.product.name , d.quanity,d.price,d.amount) "//
-//				+ " from " + MaterialDetails.class.getName() + " d "//
-//				+ " where d.order.id = :orderId ";
-//
-//		Session session = this.sessionFactory.getCurrentSession();
-//		Query<OrderDetailInfo> query = session.createQuery(sql, OrderDetailInfo.class);
-//		query.setParameter("orderId", orderId);
-//
-//		return query.getResultList();
-//	}
-//
+	public List<MaterialDetailInfo> getRawMaterialListInfo() {
+		String sql = "Select new " + MaterialDetailInfo.class.getName()//
+				+ "(md.materialName) " + " from " + MaterialDetails.class.getName() + " md ";//
+
+		Session session = this.sessionFactory.getCurrentSession();
+		Query<MaterialDetailInfo> query = session.createQuery(sql, MaterialDetailInfo.class);
+		return query.getResultList();
+	}
+
 	// @page = 1, 2, ...
 	public PaginationResult<MaterialDetailInfo> listDetailInfo(int page, int maxResult, int maxNavigationPage) {
 		String sql = "Select new " + MaterialDetailInfo.class.getName()//
-				+ "(md.materialId, md.materialName, md.materialCost, md.materialColor, md.materialThreshold, md.materialQuantity) "
+				+ "(md.materialId, md.materialName, md.materialCost, md.materialColor, md.materialThreshold, md.materialQuantity, md.lastModified) "
 				+ " from " + MaterialDetails.class.getName() + " md ";//
 
 		Session session = this.sessionFactory.getCurrentSession();
@@ -66,46 +64,67 @@ public class MaterialDAO {
 		return new PaginationResult<MaterialDetailInfo>(query, page, maxResult, maxNavigationPage);
 	}
 
-//	@Transactional(rollbackFor = Exception.class)
-//	public void saveOrder(CartInfo cartInfo) {
-//		Session session = this.sessionFactory.getCurrentSession();
-//
-//		int orderNum = this.getMaxOrderNum() + 1;
-//		Order order = new Order();
-//
-//		order.setId(UUID.randomUUID().toString());
-//		order.setOrderNum(orderNum);
-//		order.setOrderDate(new Date());
-//		order.setAmount(cartInfo.getAmountTotal());
-//
-//		CustomerInfo customerInfo = cartInfo.getCustomerInfo();
-//		order.setCustomerName(customerInfo.getName());
-//		order.setCustomerEmail(customerInfo.getEmail());
-//		order.setCustomerPhone(customerInfo.getPhone());
-//		order.setCustomerAddress(customerInfo.getAddress());
-//
-//		session.persist(order);
-//
-//		List<CartLineInfo> lines = cartInfo.getCartLines();
-//
-//		for (CartLineInfo line : lines) {
-//			OrderDetail detail = new OrderDetail();
-//			detail.setId(UUID.randomUUID().toString());
-//			detail.setOrder(order);
-//			detail.setAmount(line.getAmount());
-//			detail.setPrice(line.getProductInfo().getPrice());
-//			detail.setQuanity(line.getQuantity());
-//
-//			String code = line.getProductInfo().getCode();
-//			Product product = this.productDAO.findProduct(code);
-//			detail.setProduct(product);
-//
-//			session.persist(detail);
-//		}
-//
-//		// Order Number!
-//		cartInfo.setOrderNum(orderNum);
-//		// Flush
-//		session.flush();
-//	}
+	public void doDeduction(Map<String, Integer> materialMap) {
+		for (Map.Entry<String, Integer> entry : materialMap.entrySet()) {
+			Product product = this.productDAO.findProduct(entry.getKey());
+
+			deduceMaterialQuantityCalculation(entry, product.getRawMaterial1(), product.getRawMaterial1Quantity());
+			deduceMaterialQuantityCalculation(entry, product.getRawMaterial2(), product.getRawMaterial2Quantity());
+			deduceMaterialQuantityCalculation(entry, product.getRawMaterial3(), product.getRawMaterial3Quantity());
+		}
+	}
+
+	private void deduceMaterialQuantityCalculation(Map.Entry<String, Integer> entry, String material, int quanity) {
+		int materialDetailsId = getMaterialId(material);
+		MaterialForm mtInfo = getDetailInfo(materialDetailsId);
+
+		int quantity = mtInfo.getMaterialQuantity() - (quanity * entry.getValue());
+		if (quantity >= 0) {
+			mtInfo.setMaterialQuantity(quantity);
+			save(mtInfo);
+		} else
+			System.out.println("error saving");
+
+	}
+
+	private int getMaterialId(String materialName) {
+		String sql = "Select new " + MaterialDetailInfo.class.getName()//
+				+ "(md.materialId) " + " from " + MaterialDetails.class.getName() + " md ";//
+
+		sql += " Where md.materialName =:materialName ";
+		Session session = this.sessionFactory.getCurrentSession();
+		Query<MaterialDetailInfo> query = session.createQuery(sql, MaterialDetailInfo.class);
+		query.setParameter("materialName", materialName);
+
+		return query.getSingleResult().getMaterialId();
+	}
+
+	@Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = Exception.class)
+	public void save(MaterialForm materialForm) {
+
+		Session session = this.sessionFactory.getCurrentSession();
+		MaterialDetails details = null;
+
+		boolean isNew = false;
+		if (materialForm.getMaterialId() != 0)
+			details = this.findOrder(materialForm.getMaterialId());
+		if (details == null) {
+			isNew = true;
+			details = new MaterialDetails();
+			details.setLastModified((Timestamp) new Date());
+		}
+
+		details.setMaterialId(materialForm.getMaterialId());
+		details.setMaterialName(materialForm.getMaterialName());
+		details.setMaterialCost(materialForm.getMaterialCost());
+		details.setMaterialColor(materialForm.getMaterialColor());
+		details.setMaterialThreshold(materialForm.getMaterialThreshold());
+		details.setMaterialQuantity(materialForm.getMaterialQuantity());
+
+		if (isNew)
+			session.persist(details);
+		// If error in DB, Exceptions will be thrown out immediately
+		session.flush();
+	}
+
 }

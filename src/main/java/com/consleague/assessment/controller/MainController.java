@@ -1,6 +1,9 @@
 package com.consleague.assessment.controller;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -19,11 +22,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.consleague.assessment.dao.MaterialDAO;
 import com.consleague.assessment.dao.OrderDAO;
 import com.consleague.assessment.dao.ProductDAO;
 import com.consleague.assessment.entity.Product;
 import com.consleague.assessment.form.CustomerForm;
 import com.consleague.assessment.model.CartInfo;
+import com.consleague.assessment.model.CartLineInfo;
 import com.consleague.assessment.model.CustomerInfo;
 import com.consleague.assessment.model.ProductInfo;
 import com.consleague.assessment.pagination.PaginationResult;
@@ -42,6 +47,9 @@ public class MainController {
 
 	@Autowired
 	private ProductDAO productDAO;
+
+	@Autowired
+	private MaterialDAO materialDAO;
 
 	@RequestMapping("/403")
 	public String accessDenied() {
@@ -154,6 +162,19 @@ public class MainController {
 		return "shoppingCartConfirmation";
 	}
 
+	private void deductRawMaterialsCount(CartInfo cartInfo) {
+		Map<String, Integer> materialMap = new HashMap<String, Integer>();
+		List<CartLineInfo> cartLines = cartInfo.getCartLines();
+
+		for (CartLineInfo s : cartLines) {
+			materialMap.put(s.getProductInfo().getCode(), s.getQuantity());
+		}
+
+		materialDAO.doDeduction(materialMap);
+		System.out.println(materialMap);
+
+	}
+
 	// POST: Submit Cart (Save)
 	@RequestMapping(value = { "/shoppingCartConfirmation" }, method = RequestMethod.POST)
 
@@ -165,6 +186,8 @@ public class MainController {
 		else if (!cartInfo.isValidCustomer())
 			return "redirect:/shoppingCartCustomer";
 		try {
+			deductRawMaterialsCount(cartInfo);
+
 			orderDAO.saveOrder(cartInfo);
 		} catch (Exception e) {
 
