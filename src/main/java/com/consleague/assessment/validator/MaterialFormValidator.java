@@ -18,11 +18,24 @@ public class MaterialFormValidator implements Validator {
 
 	@Override
 	public void validate(Object target, Errors errors) {
+		MaterialForm materialForm = (MaterialForm) target;
 
 		// Check the fields of MaterialForm.
+
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "materialId", "NotEmpty.MaterialForm.materialId");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "materialName", "NotEmpty.MaterialForm.materialName");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "materialQuantity", "NotEmpty.MaterialForm.materialQuantity");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "materialCost", "NotEmpty.MaterialForm.materialCost");
+
+		if (materialForm.getMaterialQuantity() <= 0)
+			errors.rejectValue("materialQuantity", "NotEmpty.MaterialForm.materialQuantity");
+
+		if (materialForm.getMaterialCost() <= 0)
+			errors.rejectValue("materialCost", "NotEmpty.MaterialForm.materialCost");
+
+		if (materialForm.getMaterialColor().isEmpty())
+			errors.rejectValue("materialColor", "NotEmpty.MaterialForm.materialColor");
+
+		if (materialForm.getMaterialThreshold() <= 5)
+			errors.rejectValue("materialThreshold", "NotEmpty.MaterialForm.materialThreshold");
 
 	}
 

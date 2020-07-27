@@ -14,6 +14,20 @@ public class MaterialForm {
 	private int materialThreshold;
 	private Timestamp lastModified;
 
+	private boolean newMaterial = false;
+
+	public MaterialForm() {
+		this.newMaterial = true;
+	}
+
+	public boolean isNewMaterial() {
+		return newMaterial;
+	}
+
+	public void setNewMaterial(boolean newMaterial) {
+		this.newMaterial = newMaterial;
+	}
+
 	public Timestamp getLastModified() {
 		return lastModified;
 	}
@@ -25,6 +39,11 @@ public class MaterialForm {
 	public MaterialForm(MaterialDetails materials) {
 		this.materialName = materials.getMaterialName();
 		this.materialId = materials.getMaterialId();
+
+		this.materialColor = materials.getMaterialColor();
+		this.materialCost = materials.getMaterialCost();
+		this.materialQuantity = materials.getMaterialQuantity();
+		this.materialThreshold = materials.getMaterialThreshold();
 	}
 
 	public String getMaterialColor() {

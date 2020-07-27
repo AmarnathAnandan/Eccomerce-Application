@@ -38,6 +38,7 @@
             <th>Quantity</th>
             <th>Threshold</th>
             <th>Last Updated</th>
+            <th>Update</th>
          </tr>
          <tr th:each="DetailInfo : ${paginationResult.list}">
             <td th:utext="${DetailInfo.materialName}"></td>
@@ -46,21 +47,20 @@
             <td th:utext="${DetailInfo.materialQuantity}"></td>
             <td style="color:red;" th:utext="${DetailInfo.materialThreshold}"></td>
             <td th:utext="${DetailInfo.lastModified}"></td>
-<!--             <td style="color:red;" th:utext="${#numbers.formatDecimal(DetailInfo.materialQuantity,3,2,'COMMA')}"> -->
-<!--             <td><a th:href="@{|/admin/order?orderId=${DetailInfo.materialId}|}">Edit</a></td> -->
+            <td><a style="color:darkorchid;" th:href="@{|/admin/materialEdit?materialId=${DetailInfo.materialId}|}">Edit</a></td>
          </tr>
       </table>
        
-<!--        <div class="page-navigator" th:if="${paginationResult.totalPages > 1}"> -->
-<!--          <th:block th:each="page : ${paginationProducts.navigationPages}"> -->
+       <div class="page-navigator" th:if="${paginationResult.totalPages > 1}">
+         <th:block th:each="page : ${paginationResult.navigationPages}">
          
-<!--             <a th:href="@{|/admin/materialList?page=${page}|}" th:if="${page != -1}" -->
-<!--                class="nav-item" th:utext="${page}"></a> -->
+            <a th:href="@{|/admin/materialList?page=${page}|}" th:if="${page != -1}"
+               class="nav-item" th:utext="${page}"></a>
                
-<!--             <span class="nav-item" th:if="${page == -1}"> ... </span> -->
+            <span class="nav-item" th:if="${page == -1}"> ... </span>
              
-<!--          </th:block> -->
-<!--       </div> -->
+         </th:block>
+      </div>
       <th:block th:include="/_footer"></th:block>
        </div>
    </body>

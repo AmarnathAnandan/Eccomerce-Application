@@ -142,6 +142,8 @@ public class MaterialDAO {
 		details.setMaterialThreshold(materialForm.getMaterialThreshold());
 		details.setMaterialQuantity(materialForm.getMaterialQuantity());
 
+		details.setLastModified(new Timestamp(new Date().getTime()));
+
 		if (isNew)
 			session.persist(details);
 		// If error in DB, Exceptions will be thrown out immediately

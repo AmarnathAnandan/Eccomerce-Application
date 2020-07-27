@@ -22,12 +22,15 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.consleague.assessment.dao.MaterialDAO;
 import com.consleague.assessment.dao.OrderDAO;
 import com.consleague.assessment.dao.ProductDAO;
+import com.consleague.assessment.entity.MaterialDetails;
 import com.consleague.assessment.entity.Product;
+import com.consleague.assessment.form.MaterialForm;
 import com.consleague.assessment.form.ProductForm;
 import com.consleague.assessment.model.MaterialDetailInfo;
 import com.consleague.assessment.model.OrderDetailInfo;
 import com.consleague.assessment.model.OrderInfo;
 import com.consleague.assessment.pagination.PaginationResult;
+import com.consleague.assessment.validator.MaterialFormValidator;
 import com.consleague.assessment.validator.ProductFormValidator;
 
 @Controller
@@ -45,6 +48,9 @@ public class AdminController {
 
 	@Autowired
 	private ProductFormValidator productFormValidator;
+
+	@Autowired
+	private MaterialFormValidator materialFormValidator;
 
 	@RequestMapping(value = { "/admin/accountInfo" }, method = RequestMethod.GET)
 	public String accountInfo(Model model) {
@@ -66,7 +72,7 @@ public class AdminController {
 			page = Integer.parseInt(pageStr);
 		} catch (Exception e) {
 		}
-		final int MAX_RESULT = 50;
+		final int MAX_RESULT = 10;
 		final int MAX_NAVIGATION_PAGE = 10;
 
 		PaginationResult<MaterialDetailInfo> paginationResult //
@@ -92,6 +98,9 @@ public class AdminController {
 
 		if (target.getClass() == ProductForm.class)
 			dataBinder.setValidator(productFormValidator);
+
+		if (target.getClass() == MaterialForm.class)
+			dataBinder.setValidator(materialFormValidator);
 	}
 
 	@RequestMapping(value = { "/admin/orderList" }, method = RequestMethod.GET)
@@ -172,6 +181,52 @@ public class AdminController {
 		}
 
 		return "redirect:/productList";
+	}
+
+	// GET: Show product.
+	@RequestMapping(value = { "/admin/materialEdit" }, method = RequestMethod.GET)
+	public String materialEdit(Model model, @RequestParam(value = "materialId", defaultValue = "1") int materialId) {
+
+		MaterialForm materialForm = null;
+
+		if (materialId > 1) {
+			MaterialDetails details = materialDAO.findOrder(materialId);
+			if (details != null)
+				materialForm = new MaterialForm(details);
+		}
+		if (materialForm == null) {
+			materialForm = new MaterialForm();
+			materialForm.setNewMaterial(true);
+		}
+
+//			List<MaterialDetailInfo> materialNameList = materialDAO.getRawMaterialListInfo();
+//			model.addAttribute("materialNameList", materialNameList);
+		model.addAttribute("materialForm", materialForm);
+		return "materialEdit";
+	}
+
+	// POST: Save product
+	@RequestMapping(value = { "/admin/materialEdit" }, method = RequestMethod.POST)
+	public String materialEditSave(Model model, //
+			@ModelAttribute("materialForm") @Validated MaterialForm materialForm, //
+			BindingResult result, //
+			final RedirectAttributes redirectAttributes) {
+
+		if (result.hasErrors()) {
+			model.addAttribute("materialForm", materialForm);
+			return "materialEdit";
+		}
+		try {
+			materialDAO.save(materialForm);
+		} catch (Exception e) {
+			Throwable rootCause = ExceptionUtils.getRootCause(e);
+			String message = rootCause.getMessage();
+			model.addAttribute("errorMessage", message);
+			// Show product form.
+			return "materialEdit";
+		}
+
+		return "redirect:/admin/materialList";
 	}
 
 }
