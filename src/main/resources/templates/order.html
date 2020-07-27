@@ -2,14 +2,14 @@
 <html xmlns:th="http://www.thymeleaf.org">
    <head>
       <meta charset="UTF-8">
-      <title>Product List</title>
+      <title>Order Summary</title>
       <link rel="stylesheet" type="text/css" th:href="@{/styles.css}">
    </head>
    <body>
       <th:block th:include="/_header"></th:block>
       <th:block th:include="/_menu"></th:block>
        
-      <div class="page-title">Order Info</div>
+      <div class="page-title"><b>Order Info</b></div>
        
       <div class="customer-info-container">
          <h3>Customer Information:</h3>
@@ -21,7 +21,7 @@
          </ul>
          <h3>Order Summary:</h3>
          <ul>
-            <li>Total:
+            <li>Total: Rs.
                <span class="total" th:utext="${#numbers.formatDecimal(orderInfo.amount,3,2,'COMMA')}">         
                </span>
             </li>

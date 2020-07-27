@@ -3,17 +3,15 @@
   xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity">
    <a th:href="@{/}">Home</a>
    |
-   <a th:href="@{/productList}">
-   Product List
-   </a>
-   |
-   <a th:href="@{/shoppingCart}">
-   My Cart
-   </a>
-   |
-   <th:block sec:authorize="hasAnyRole('ROLE_MANAGER','ROLE_EMPLOYEE')">
-      <a th:href="@{/admin/orderList}">
-      Order List
+    <th:block sec:authorize="hasRole('ROLE_MANAGER')">
+      <a th:href="@{/admin/materialEdit}">
+      Create Stock
+      </a>
+      |
+   </th:block>
+    <th:block sec:authorize="hasRole('ROLE_MANAGER')">
+      <a th:href="@{/admin/materialList}">
+      Inventory Management
       </a>
       |
    </th:block>
@@ -23,17 +21,23 @@
       </a>
       |
    </th:block>
-   <th:block sec:authorize="hasRole('ROLE_MANAGER')">
-      <a th:href="@{/admin/materialList}">
-      Inventory Management
+    <th:block sec:authorize="hasAnyRole('ROLE_MANAGER','ROLE_EMPLOYEE')">
+      <a th:href="@{/admin/orderList}">
+      Order List
       </a>
       |
    </th:block>
-    <th:block sec:authorize="hasRole('ROLE_MANAGER')">
-      <a th:href="@{/admin/materialEdit}">
-      Create Stock
-      </a>
-      |
-   </th:block>
+   <a th:href="@{/productList}">
+   Product List
+   </a>
+   |
+   <a th:href="@{/shoppingCart}">
+   My Cart
+   </a>
+   |
+  
+   
+  
+   
    
 </div>
