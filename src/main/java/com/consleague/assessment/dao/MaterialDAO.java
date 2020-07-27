@@ -132,7 +132,6 @@ public class MaterialDAO {
 		if (details == null) {
 			isNew = true;
 			details = new MaterialDetails();
-			details.setLastModified((Timestamp) new Date());
 		}
 
 		details.setMaterialId(materialForm.getMaterialId());
