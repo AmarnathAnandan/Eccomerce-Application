@@ -10,6 +10,8 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +28,9 @@ public class MaterialDAO {
 
 	@Autowired
 	private SessionFactory sessionFactory;
+
+	@Autowired
+	private JavaMailSender javaMailSender;
 
 	@Autowired
 	private ProductDAO productDAO;
@@ -93,14 +98,18 @@ public class MaterialDAO {
 		int materialDetailsId = getMaterialId(material);
 		MaterialForm mtInfo = getDetailInfo(materialDetailsId);
 
-		int quantity = mtInfo.getMaterialQuantity() - (quanity * entry.getValue());
-		if (quantity >= 0 && isSave) {
-			mtInfo.setMaterialQuantity(quantity);
+		int newQuantity = mtInfo.getMaterialQuantity() - (quanity * entry.getValue());
+		if (newQuantity >= 0 && isSave) {
+			if (mtInfo.getMaterialThreshold() > newQuantity) {
+				sendMailToSysAdmin(mtInfo.getMaterialName(), mtInfo.getMaterialThreshold(), newQuantity);
+			}
+
+			mtInfo.setMaterialQuantity(newQuantity);
 			save(mtInfo);
 			return true;
-		} else if (quantity <= 0 && isSave) {
+		} else if (newQuantity <= 0 && isSave) {
 			return false;
-		} else if (quantity <= 0 && !isSave) {
+		} else if (newQuantity <= 0 && !isSave) {
 			return false;
 		} else {
 			return true;
@@ -118,6 +127,19 @@ public class MaterialDAO {
 		query.setParameter("materialName", materialName);
 
 		return query.getSingleResult().getMaterialId();
+	}
+
+	public void sendMailToSysAdmin(String materialName, int threshold, int updatedQuantity) {
+		SimpleMailMessage msg = new SimpleMailMessage();
+		msg.setTo("amarnath0002@gmail.com");
+
+		msg.setSubject("Raw materials are lesser than the Threshold");
+
+		String message = "The raw material " + materialName + " is lesser than the threshold. \n" + "Threshold : "
+				+ threshold + "\n" + "Updated Quantity : " + updatedQuantity;
+		msg.setText(message);
+
+		javaMailSender.send(msg);
 	}
 
 	@Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = Exception.class)

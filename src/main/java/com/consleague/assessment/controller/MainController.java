@@ -59,6 +59,7 @@ public class MainController {
 	@RequestMapping("/")
 	public String home() {
 		return "index";
+
 	}
 
 	@RequestMapping({ "/buyProduct" })
@@ -186,7 +187,6 @@ public class MainController {
 			return "redirect:/shoppingCartCustomer";
 		try {
 			deductRawMaterialsCount(cartInfo, true);
-
 			orderDAO.saveOrder(cartInfo);
 		} catch (Exception e) {
 
