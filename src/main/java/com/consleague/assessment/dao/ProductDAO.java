@@ -84,17 +84,11 @@ public class ProductDAO {
 			product = new Product();
 			product.setCreateDate(new Date());
 		}
+
 		product.setCode(code);
 		product.setName(productForm.getName());
 
-		product.setRawMaterial1(productForm.getRawMaterial1());
-		product.setRawMaterial1Quantity(productForm.getRawMaterial1Quantity());
-		product.setRawMaterial2(productForm.getRawMaterial2());
-		product.setRawMaterial2Quantity(productForm.getRawMaterial2Quantity());
-		product.setRawMaterial3(productForm.getRawMaterial3());
-		product.setRawMaterial3Quantity(productForm.getRawMaterial3Quantity());
-
-		product.setPrice(calculateProductPrice(productForm));
+//		product.setPrice(calculateProductPrice(productForm));
 
 		if (productForm.getFileData() != null) {
 			byte[] image = null;
@@ -111,11 +105,11 @@ public class ProductDAO {
 		session.flush();
 	}
 
-	public double calculateProductPrice(ProductForm productForm) {
-		return getMaterialCost(productForm.getRawMaterial1(), productForm.getRawMaterial1Quantity())
-				+ getMaterialCost(productForm.getRawMaterial2(), productForm.getRawMaterial2Quantity())
-				+ getMaterialCost(productForm.getRawMaterial3(), productForm.getRawMaterial3Quantity());
-	}
+//	public double calculateProductPrice(ProductForm productForm) {
+//		return getMaterialCost(productForm.getRawMaterial1(), productForm.getRawMaterial1Quantity())
+//				+ getMaterialCost(productForm.getRawMaterial2(), productForm.getRawMaterial2Quantity())
+//				+ getMaterialCost(productForm.getRawMaterial3(), productForm.getRawMaterial3Quantity());
+//	}
 
 	private double getMaterialCost(String rawMaterial, int rawMaterialQuantity) {
 		double cost = 0;

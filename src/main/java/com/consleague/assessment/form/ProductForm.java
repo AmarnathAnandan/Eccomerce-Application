@@ -1,10 +1,20 @@
 package com.consleague.assessment.form;
 
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.consleague.assessment.dao.CompositionDetailsDAO;
 import com.consleague.assessment.entity.Product;
+import com.consleague.assessment.model.CompositionDetailInfo;
 
 public class ProductForm {
+
+	@Autowired
+	private CompositionDetailsDAO compositionDetailsDAO;
+
 	private String code;
 	// Upload file.
 	private MultipartFile fileData;
@@ -12,117 +22,94 @@ public class ProductForm {
 
 	private boolean newProduct = false;
 	private double price;
-	private String rawMaterial1;
-	private int rawMaterial1Quantity;
-	private String rawMaterial2;
-	private int rawMaterial2Quantity;
 
-	private String rawMaterial3;
+	private int compid;
 
-	private int rawMaterial3Quantity;
+	private String productCode;
+
+	private Map<String, Integer> rawMaterialDetails;
+
+	public Map<String, Integer> getRawMaterialDetails() {
+		return rawMaterialDetails;
+	}
+
+	public void setRawMaterialDetails(Map<String, Integer> rawMaterialDetails) {
+		this.rawMaterialDetails = rawMaterialDetails;
+	}
 
 	public ProductForm() {
 		this.newProduct = true;
 	}
 
+	List<CompositionDetailInfo> compDetails = compositionDetailsDAO.getMaterialDetailLineList(productCode);
+
 	public ProductForm(Product product) {
+
 		this.code = product.getCode();
 		this.name = product.getName();
 		this.price = product.getPrice();
-		this.rawMaterial1 = product.getRawMaterial1();
-		this.rawMaterial1Quantity = product.getRawMaterial1Quantity();
-		this.rawMaterial2 = product.getRawMaterial2();
-		this.rawMaterial2Quantity = product.getRawMaterial2Quantity();
-		this.rawMaterial3 = product.getRawMaterial3();
-		this.rawMaterial3Quantity = product.getRawMaterial3Quantity();
+
+//		this.compid = compDetails.getCompid();
+//		this.productCode = compDetails.getProduct().getCode();
+//		this.materialId = compDetails.getMaterialDetails().getMaterialId();
+//		this.productMaterialQuanity = compDetails.getProductMaterialQuanity();
+
 	}
 
 	public String getCode() {
 		return code;
 	}
 
-	public MultipartFile getFileData() {
-		return fileData;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public double getPrice() {
-		return price;
-	}
-
-	public String getRawMaterial1() {
-		return rawMaterial1;
-	}
-
-	public int getRawMaterial1Quantity() {
-		return rawMaterial1Quantity;
-	}
-
-	public String getRawMaterial2() {
-		return rawMaterial2;
-	}
-
-	public int getRawMaterial2Quantity() {
-		return rawMaterial2Quantity;
-	}
-
-	public String getRawMaterial3() {
-		return rawMaterial3;
-	}
-
-	public int getRawMaterial3Quantity() {
-		return rawMaterial3Quantity;
-	}
-
-	public boolean isNewProduct() {
-		return newProduct;
-	}
-
 	public void setCode(String code) {
 		this.code = code;
+	}
+
+	public MultipartFile getFileData() {
+		return fileData;
 	}
 
 	public void setFileData(MultipartFile fileData) {
 		this.fileData = fileData;
 	}
 
+	public String getName() {
+		return name;
+	}
+
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public boolean isNewProduct() {
+		return newProduct;
 	}
 
 	public void setNewProduct(boolean newProduct) {
 		this.newProduct = newProduct;
 	}
 
+	public double getPrice() {
+		return price;
+	}
+
 	public void setPrice(double price) {
 		this.price = price;
 	}
 
-	public void setRawMaterial1(String rawMaterial1) {
-		this.rawMaterial1 = rawMaterial1;
+	public int getCompid() {
+		return compid;
 	}
 
-	public void setRawMaterial1Quantity(int rawMaterial1Quantity) {
-		this.rawMaterial1Quantity = rawMaterial1Quantity;
+	public void setCompid(int compid) {
+		this.compid = compid;
 	}
 
-	public void setRawMaterial2(String rawMaterial2) {
-		this.rawMaterial2 = rawMaterial2;
+	public String getProductCode() {
+		return productCode;
 	}
 
-	public void setRawMaterial2Quantity(int rawMaterial2Quantity) {
-		this.rawMaterial2Quantity = rawMaterial2Quantity;
-	}
-
-	public void setRawMaterial3(String rawMaterial3) {
-		this.rawMaterial3 = rawMaterial3;
-	}
-
-	public void setRawMaterial3Quantity(int rawMaterial3Quantity) {
-		this.rawMaterial3Quantity = rawMaterial3Quantity;
+	public void setProductCode(String productCode) {
+		this.productCode = productCode;
 	}
 
 }

@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.consleague.assessment.dao.CompositionDetailsDAO;
 import com.consleague.assessment.dao.MaterialDAO;
 import com.consleague.assessment.dao.OrderDAO;
 import com.consleague.assessment.dao.ProductDAO;
@@ -36,6 +37,9 @@ import com.consleague.assessment.validator.ProductFormValidator;
 @Controller
 @Transactional
 public class AdminController {
+
+	@Autowired
+	private CompositionDetailsDAO compositionDetailsDAO;
 
 	@Autowired
 	private MaterialDAO materialDAO;
@@ -151,8 +155,8 @@ public class AdminController {
 			productForm.setNewProduct(true);
 		}
 
-		List<MaterialDetailInfo> materialNameList = materialDAO.getRawMaterialListInfo();
-		model.addAttribute("materialNameList", materialNameList);
+//		List<MaterialDetailInfo> materialNameList = materialDAO.getRawMaterialListInfo();
+//		model.addAttribute("materialNameList", materialNameList);
 		model.addAttribute("productForm", productForm);
 		return "product";
 	}
@@ -172,6 +176,8 @@ public class AdminController {
 		}
 		try {
 			productDAO.save(productForm);
+			compositionDetailsDAO.save(productForm);
+
 		} catch (Exception e) {
 			Throwable rootCause = ExceptionUtils.getRootCause(e);
 			String message = rootCause.getMessage();
